@@ -10,6 +10,9 @@ class Window():
         self.__canvas.pack(fill=BOTH, expand=1)
         self.__running = False
         self.__root.protocol("WM_DELETE_WINDOW", self.close) # add after creating redraw(), wait_to_close(), and close() methods
+
+    def get_canvas(self):
+        return self.__canvas
     
     def draw_line(self, line, fill_color="black"):
         line.draw(self.__canvas, fill_color)
@@ -27,8 +30,60 @@ class Window():
     def close(self):
         self.__running = False
 
-    
+class Cell():
+    def __init__(self, win, x1, y1, x2, y2):
+        self._win = win
+        self._x1 = x1
+        self._y1 = y1
+        self._x2 = x2
+        self._y2 = y2
+        self.has_left_wall = True
+        self.has_right_wall = True
+        self.has_top_wall = True
+        self.has_bottom_wall = True
+        
 
+    def draw(self):
+        canvas = self._win.get_canvas()
+
+        if self.has_left_wall:
+            p1 = Point(self._x1, self._y1)
+            p2 = Point(self._x1, self._y2)
+            left_wall = Line(p1, p2)
+            left_wall.draw(canvas)
+        if self.has_right_wall:
+            p1 = Point(self._x2, self._y1)
+            p2 = Point(self._x2, self._y2)
+            right_wall = Line(p1, p2)
+            right_wall.draw(canvas)
+        if self.has_top_wall:
+            p1 = Point(self._x1, self._y1)
+            p2 = Point(self._x2, self._y1)
+            top_wall = Line(p1, p2)
+            top_wall.draw(canvas)
+        if self.has_bottom_wall:
+            p1 = Point(self._x1, self._y2)
+            p2 = Point(self._x2, self._y2)
+            bottom_wall = Line(p1, p2)
+            bottom_wall.draw(canvas)
+
+    def get_center(self):
+        center_x = (self._x1 + self._x2) / 2
+        center_y = (self._y1 + self._y2) / 2
+        return (center_x, center_y)
+
+    def draw_move(self, to_cell, undo=False):
+        from_center = self.get_center()
+        to_center = to_cell.get_center()
+
+        from_point = Point(from_center[0], from_center[1])
+        to_point = Point(to_center[0], to_center[1])
+
+        line = Line(from_point, to_point)
+
+
+        color = "gray" if undo else "red"
+        self._win.draw_line(line, color)
 
 class Point():
     def __init__(self, x, y):
