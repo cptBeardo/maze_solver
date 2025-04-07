@@ -1,4 +1,4 @@
-from creation import Window, Point, Line, Cell
+from creation import Window, Point, Line, Cell, Maze
 
 
 def main():
