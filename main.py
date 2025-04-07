@@ -24,18 +24,18 @@ def main():
     """end of the test lines"""
 
     """start tests for Cell() creation"""
-    cell1 = Cell(win, 50, 50, 100, 100)
+    cell1 = Cell(50, 50, 100, 100, win)
     cell1.draw()
 
-    cell2 = Cell(win, 150, 50, 200, 100)
+    cell2 = Cell(150, 50, 200, 100, win)
     cell2.has_right_wall = False
     cell2.draw()
 
-    cell3 = Cell(win, 50, 150, 100, 200)
+    cell3 = Cell(50, 150, 100, 200, win)
     cell3.has_bottom_wall = False
     cell3.draw()
 
-    cell4 = Cell(win, 150, 150, 200, 200)
+    cell4 = Cell(150, 150, 200, 200, win)
     cell4.has_left_wall = False
     cell4.has_top_wall = False
     cell4.draw()

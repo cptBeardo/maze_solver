@@ -33,7 +33,7 @@ class Window():
         self.__running = False
 
 class Maze():
-    def __init__(self, x1, y1, num_rows, num_cols, cell_size_x, cell_size_y, win):
+    def __init__(self, x1, y1, num_rows, num_cols, cell_size_x, cell_size_y, win=None):
         self.x1 = x1
         self.y1 = y1
         self.num_rows = num_rows
@@ -48,27 +48,31 @@ class Maze():
         for i in range(self.num_cols):
             column = []
             for j in range(self.num_rows):
-                column.append(Cell(self.win, 0, 0, 0, 0))
-                self._draw_cell(i, j)
+                column.append(None)                
             self._cells.append(column)
+
+        for i in range(self.num_cols):
+            for j in range(self.num_rows):
+                self._draw_cell(i, j)
 
     def _draw_cell(self, i, j):
         x1 = self.x1 + i * self.cell_size_x
-        y1 = self.y1 + i * self.cell_size_y
+        y1 = self.y1 + j * self.cell_size_y
         x2 = x1 + self.cell_size_x
         y2 = y1 + self.cell_size_y
 
-        self._cells[i][j] = Cell(self.win, x1, y1, x2, y2)
+        self._cells[i][j] = Cell(x1, y1, x2, y2, self.win)
         self._cells[i][j].draw()
 
         self._animate()
 
     def _animate(self):
-        self.win.redraw()
-        sleep(0.05) # if I only import time, I would need to do time.sleep()
+        if self.win:
+            self.win.redraw()
+            sleep(0.05) # if I only import time, I would need to do time.sleep()
 
 class Cell():
-    def __init__(self, win, x1, y1, x2, y2):
+    def __init__(self, x1, y1, x2, y2, win=None):
         self._win = win
         self._x1 = x1
         self._y1 = y1
@@ -81,28 +85,29 @@ class Cell():
         
 
     def draw(self):
-        canvas = self._win.get_canvas()
+        if self._win:
+            canvas = self._win.get_canvas()
 
-        if self.has_left_wall:
-            p1 = Point(self._x1, self._y1)
-            p2 = Point(self._x1, self._y2)
-            left_wall = Line(p1, p2)
-            left_wall.draw(canvas)
-        if self.has_right_wall:
-            p1 = Point(self._x2, self._y1)
-            p2 = Point(self._x2, self._y2)
-            right_wall = Line(p1, p2)
-            right_wall.draw(canvas)
-        if self.has_top_wall:
-            p1 = Point(self._x1, self._y1)
-            p2 = Point(self._x2, self._y1)
-            top_wall = Line(p1, p2)
-            top_wall.draw(canvas)
-        if self.has_bottom_wall:
-            p1 = Point(self._x1, self._y2)
-            p2 = Point(self._x2, self._y2)
-            bottom_wall = Line(p1, p2)
-            bottom_wall.draw(canvas)
+            if self.has_left_wall:
+                p1 = Point(self._x1, self._y1)
+                p2 = Point(self._x1, self._y2)
+                left_wall = Line(p1, p2)
+                left_wall.draw(canvas)
+            if self.has_right_wall:
+                p1 = Point(self._x2, self._y1)
+                p2 = Point(self._x2, self._y2)
+                right_wall = Line(p1, p2)
+                right_wall.draw(canvas)
+            if self.has_top_wall:
+                p1 = Point(self._x1, self._y1)
+                p2 = Point(self._x2, self._y1)
+                top_wall = Line(p1, p2)
+                top_wall.draw(canvas)
+            if self.has_bottom_wall:
+                p1 = Point(self._x1, self._y2)
+                p2 = Point(self._x2, self._y2)
+                bottom_wall = Line(p1, p2)
+                bottom_wall.draw(canvas)
 
     def get_center(self):
         center_x = (self._x1 + self._x2) / 2
