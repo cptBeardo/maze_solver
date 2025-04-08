@@ -71,6 +71,17 @@ class Maze():
             self.win.redraw()
             sleep(0.05) # if I only import time, I would need to do time.sleep()
 
+    def _break_entrance_and_exit(self):
+        start = self._cells[0][0]
+        end = self._cells[self.num_cols-1][self.num_rows-1]
+
+        start.has_top_wall = False
+        end.has_bottom_wall = False
+        
+        if self.win:
+            start.draw()
+            end.draw()
+
 class Cell():
     def __init__(self, x1, y1, x2, y2, win=None):
         self._win = win
@@ -88,26 +99,42 @@ class Cell():
         if self._win:
             canvas = self._win.get_canvas()
 
+            """left wall creation"""
+            p1 = Point(self._x1, self._y1)
+            p2 = Point(self._x1, self._y2)
+            left_wall = Line(p1, p2)
             if self.has_left_wall:
-                p1 = Point(self._x1, self._y1)
-                p2 = Point(self._x1, self._y2)
-                left_wall = Line(p1, p2)
-                left_wall.draw(canvas)
+                left_wall.draw(canvas, fill_color="black")
+            else:
+                left_wall.draw(canvas, fill_color="#d9d9d9")
+            
+
+            """right wall creation"""
+            p1 = Point(self._x2, self._y1)
+            p2 = Point(self._x2, self._y2)
+            right_wall = Line(p1, p2)
             if self.has_right_wall:
-                p1 = Point(self._x2, self._y1)
-                p2 = Point(self._x2, self._y2)
-                right_wall = Line(p1, p2)
-                right_wall.draw(canvas)
+                right_wall.draw(canvas, fill_color="black")
+            else:
+                right_wall.draw(canvas, fill_color="#d9d9d9")
+
+            """top wall creation"""    
+            p1 = Point(self._x1, self._y1)
+            p2 = Point(self._x2, self._y1)
+            top_wall = Line(p1, p2)
             if self.has_top_wall:
-                p1 = Point(self._x1, self._y1)
-                p2 = Point(self._x2, self._y1)
-                top_wall = Line(p1, p2)
-                top_wall.draw(canvas)
+                top_wall.draw(canvas, fill_color="black")
+            else:
+                top_wall.draw(canvas, fill_color="#d9d9d9")
+
+            """bottom wall creation"""
+            p1 = Point(self._x1, self._y2)
+            p2 = Point(self._x2, self._y2)
+            bottom_wall = Line(p1, p2)
             if self.has_bottom_wall:
-                p1 = Point(self._x1, self._y2)
-                p2 = Point(self._x2, self._y2)
-                bottom_wall = Line(p1, p2)
-                bottom_wall.draw(canvas)
+                bottom_wall.draw(canvas, fill_color="black")
+            else:
+                bottom_wall.draw(canvas, fill_color="#d9d9d9")
 
     def get_center(self):
         center_x = (self._x1 + self._x2) / 2
