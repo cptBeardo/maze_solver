@@ -1,3 +1,4 @@
+import random
 from tkinter import Tk, BOTH, Canvas
 from time import sleep
 
@@ -33,7 +34,7 @@ class Window():
         self.__running = False
 
 class Maze():
-    def __init__(self, x1, y1, num_rows, num_cols, cell_size_x, cell_size_y, win=None):
+    def __init__(self, x1, y1, num_rows, num_cols, cell_size_x, cell_size_y, win=None, seed=None):
         self.x1 = x1
         self.y1 = y1
         self.num_rows = num_rows
@@ -42,6 +43,8 @@ class Maze():
         self.cell_size_y = cell_size_y
         self.win = win
         self._create_cells()
+        if seed is not None:
+            random.seed(seed)
 
     def _create_cells(self):
         self._cells = []
@@ -82,6 +85,47 @@ class Maze():
             start.draw()
             end.draw()
 
+    def _break_walls_r(self, i, j):
+        self._cells[i][j].visited = True
+        while True:
+            possible_directions = []
+            if j > 0 and not self._cells[i][j-1].visited:
+                possible_directions.append((i, j-1))
+            if i < self.num_cols - 1 and not self._cells[i+1][j].visited:
+                possible_directions.append((i+1, j))
+            if j < self.num_rows - 1 and not self._cells[i][j+1].visited:
+                possible_directions.append((i, j+1))
+            if i > 0 and not self._cells[i-1][j].visited:
+                possible_directions.append((i-1, j))
+
+            if len(possible_directions) == 0:
+                self._draw_cell(i, j)
+                return
+            
+            next_index = random.randrange(len(possible_directions))
+            next_i, next_j = possible_directions[next_index]
+
+            current_cell = self._cells[i][j]
+            next_cell = self._cells[next_i][next_j]
+
+            if next_i > i:
+                current_cell.has_right_wall = False         
+                next_cell.has_left_wall = False
+            elif next_i < i:
+                current_cell.has_left_wall = False
+                next_cell.has_right_wall = False
+            elif next_j > j:
+                current_cell.has_bottom_wall = False
+                next_cell.has_top_wall = False
+            elif next_j < j:
+                current_cell.has_top_wall = False
+                next_cell.has_bottom_wall = False
+            
+            self._draw_cell(i, j)
+            self._draw_cell(next_i, next_j)
+
+            self._break_walls_r(next_i, next_j)
+
 class Cell():
     def __init__(self, x1, y1, x2, y2, win=None):
         self._win = win
@@ -93,6 +137,7 @@ class Cell():
         self.has_right_wall = True
         self.has_top_wall = True
         self.has_bottom_wall = True
+        self.visited = False
         
 
     def draw(self):
