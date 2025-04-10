@@ -126,6 +126,11 @@ class Maze():
 
             self._break_walls_r(next_i, next_j)
 
+    def _reset_cells_visited(self):
+        for i in range(self.num_cols):
+            for j in range(self.num_rows):
+                self._cells[i][j].visited = False
+
 class Cell():
     def __init__(self, x1, y1, x2, y2, win=None):
         self._win = win

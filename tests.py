@@ -87,5 +87,32 @@ class TestMaze(unittest.TestCase):
         self.assertEqual(offset_maze.x1, 10, "X-offset should be preserved")
         self.assertEqual(offset_maze.y1, 20, "Y-offset should be preserved")
 
+    def test_reset_cells_visited(self):
+        maze = Maze(0, 0, 3, 3, 10, 10)
+
+        maze._cells[0][0].visited = True
+        maze._cells[1][1].visited = True
+        maze._cells[2][2].visited = True
+        
+        maze._reset_cells_visited()
+
+        for i in range(maze.num_cols):
+            for j in range(maze.num_rows):
+                self.assertFalse(maze._cells[i][j].visited)
+
+    def test_reset_cells_visited_after_breaking_walls(self):
+        maze = Maze(0, 0, 4, 4, 10, 10, seed=42)
+
+        for i in range(maze.num_cols):
+            for j in range(maze.num_rows):
+                maze._cells[i][j].visited = True
+
+        maze._reset_cells_visited()
+
+        for i in range(maze.num_cols):
+            for j in range(maze.num_rows):
+                self.assertFalse(maze._cells[i][j].visited)
+
+
 if __name__ == "__main__":
     unittest.main()
